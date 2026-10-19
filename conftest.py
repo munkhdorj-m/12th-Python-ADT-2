@@ -3,30 +3,23 @@
 import pytest
 
 HINTS = [
-    ["takes no arguments",
-     "Your class has no __init__ method yet, or it is spelled wrong.\n"
-     "It must be:  def __init__(self, ...):   (two underscores on each side)"],
-
-    ["positional argument but",
-     "One of your methods is missing 'self'.\n"
-     "Every method must start with self, for example:  def sell(self, amount):"],
-
-    ["'NoneType' object has no attribute",
-     "Something returned None (nothing) when an object was expected.\n"
-     "Check that your method has a 'return' statement."],
-
-    ["object has no attribute",
-     "An attribute or method is missing, or its name is spelled differently\n"
-     "from the README. Names must match EXACTLY, including capital letters.\n"
-     "Attributes must be created inside __init__ with  self.name = ..."],
+    ["local variable",
+     "Your function changes a global variable without saying so.\n"
+     "Add this line at the top of the function:\n"
+     "    global Stack, TopOfStack"],
 
     ["index out of range",
-     "You used an index outside the list.\n"
-     "In binary search, high must start at len(data) - 1, not len(data)."],
+     "You used an index outside the array.\n"
+     "  - Did you fill Stack with 8 elements (all \"\") at the start?\n"
+     "  - Does Push check for full (TopOfStack == 7) BEFORE adding 1?"],
 
-    ["unsupported operand type(s)",
-     "You are doing maths with None. A method probably forgot to 'return'\n"
-     "its answer, or an attribute was never set in __init__."],
+    ["can only concatenate str",
+     "You tried to join a string and a number with +.\n"
+     "Change the number into a string first, for example:  str(1)"],
+
+    ["'NoneType' object",
+     "Something is None (nothing). A function probably forgot to 'return'\n"
+     "its answer, or you left 'pass' in it."],
 ]
 
 
