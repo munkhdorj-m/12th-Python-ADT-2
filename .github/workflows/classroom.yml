@@ -28,128 +28,128 @@ jobs:
       - name: Install pytest
         run: pip install -r requirements.txt
 
-      - name: Ex 1 - Find last
-        id: ex1_find_last
+      - name: Ex 1 - Stack set up
+        id: ex1_initial_stack
         uses: classroom-resources/autograding-command-grader@v1
         with:
-          test-name: Ex 1 - Find last
-          command: pytest test_assignment.py::test1_find_last
+          test-name: Ex 1 - Stack set up
+          command: pytest test_assignment.py::test1_initial_stack
           timeout: 2
           max-score: 1
 
-      - name: Ex 1 - Not found
-        id: ex1_not_found
+      - name: Ex 1 - Push
+        id: ex1_push
         uses: classroom-resources/autograding-command-grader@v1
         with:
-          test-name: Ex 1 - Not found
-          command: pytest test_assignment.py::test1_not_found
+          test-name: Ex 1 - Push
+          command: pytest test_assignment.py::test1_push
           timeout: 2
           max-score: 1
 
-      - name: Ex 1 - No shortcuts
-        id: ex1_no_shortcuts
+      - name: Ex 1 - Push when full
+        id: ex1_push_when_full
         uses: classroom-resources/autograding-command-grader@v1
         with:
-          test-name: Ex 1 - No shortcuts
-          command: pytest test_assignment.py::test1_no_shortcuts
+          test-name: Ex 1 - Push when full
+          command: pytest test_assignment.py::test1_push_when_full
           timeout: 2
           max-score: 1
 
-      - name: Ex 2 - Found
-        id: ex2_found
+      - name: Ex 1 - Pop
+        id: ex1_pop
         uses: classroom-resources/autograding-command-grader@v1
         with:
-          test-name: Ex 2 - Found
-          command: pytest test_assignment.py::test2_found
+          test-name: Ex 1 - Pop
+          command: pytest test_assignment.py::test1_pop
           timeout: 2
           max-score: 1
 
-      - name: Ex 2 - Not found
-        id: ex2_not_found
+      - name: Ex 1 - Pop when empty
+        id: ex1_pop_when_empty
         uses: classroom-resources/autograding-command-grader@v1
         with:
-          test-name: Ex 2 - Not found
-          command: pytest test_assignment.py::test2_not_found
+          test-name: Ex 1 - Pop when empty
+          command: pytest test_assignment.py::test1_pop_when_empty
           timeout: 2
           max-score: 1
 
-      - name: Ex 2 - Uses binary search
-        id: ex2_efficiency
+      - name: Ex 1 - Uses TopOfStack
+        id: ex1_uses_top_of_stack
         uses: classroom-resources/autograding-command-grader@v1
         with:
-          test-name: Ex 2 - Uses binary search
-          command: pytest test_assignment.py::test2_efficiency
+          test-name: Ex 1 - Uses TopOfStack
+          command: pytest test_assignment.py::test1_uses_top_of_stack
           timeout: 2
           max-score: 1
 
-      - name: Ex 3 - New product
-        id: ex3_new_product
+      - name: Ex 1 - GetText
+        id: ex1_get_text
         uses: classroom-resources/autograding-command-grader@v1
         with:
-          test-name: Ex 3 - New product
-          command: pytest test_assignment.py::test3_new_product
+          test-name: Ex 1 - GetText
+          command: pytest test_assignment.py::test1_get_text
           timeout: 2
           max-score: 1
 
-      - name: Ex 3 - Sell
-        id: ex3_sell
+      - name: Ex 1 - GetText keeps stack
+        id: ex1_get_text_keeps_stack
         uses: classroom-resources/autograding-command-grader@v1
         with:
-          test-name: Ex 3 - Sell
-          command: pytest test_assignment.py::test3_sell
+          test-name: Ex 1 - GetText keeps stack
+          command: pytest test_assignment.py::test1_get_text_keeps_stack
           timeout: 2
           max-score: 1
 
-      - name: Ex 3 - Restock and value
-        id: ex3_restock_and_value
+      - name: Ex 2 - Binary
+        id: ex2_binary
         uses: classroom-resources/autograding-command-grader@v1
         with:
-          test-name: Ex 3 - Restock and value
-          command: pytest test_assignment.py::test3_restock_and_value
+          test-name: Ex 2 - Binary
+          command: pytest test_assignment.py::test2_binary
           timeout: 2
           max-score: 1
 
-      - name: Ex 4 - Add and count
-        id: ex4_add_and_count
+      - name: Ex 2 - Stack empty after
+        id: ex2_stack_empty_after
         uses: classroom-resources/autograding-command-grader@v1
         with:
-          test-name: Ex 4 - Add and count
-          command: pytest test_assignment.py::test4_add_and_count
+          test-name: Ex 2 - Stack empty after
+          command: pytest test_assignment.py::test2_stack_empty_after
           timeout: 2
           max-score: 1
 
-      - name: Ex 4 - Find product
-        id: ex4_find_product
+      - name: Ex 2 - Starts with empty stack
+        id: ex2_starts_with_empty_stack
         uses: classroom-resources/autograding-command-grader@v1
         with:
-          test-name: Ex 4 - Find product
-          command: pytest test_assignment.py::test4_find_product
+          test-name: Ex 2 - Starts with empty stack
+          command: pytest test_assignment.py::test2_starts_with_empty_stack
           timeout: 2
           max-score: 1
 
-      - name: Ex 4 - Total value
-        id: ex4_total_value
+      - name: Ex 2 - Uses the stack
+        id: ex2_uses_the_stack
         uses: classroom-resources/autograding-command-grader@v1
         with:
-          test-name: Ex 4 - Total value
-          command: pytest test_assignment.py::test4_total_value
+          test-name: Ex 2 - Uses the stack
+          command: pytest test_assignment.py::test2_uses_the_stack
           timeout: 2
           max-score: 1
 
       - name: Autograding Reporter
         uses: classroom-resources/autograding-grading-reporter@v1
         env:
-          EX1_FIND_LAST_RESULTS: "${{ steps.ex1_find_last.outputs.result }}"
-          EX1_NOT_FOUND_RESULTS: "${{ steps.ex1_not_found.outputs.result }}"
-          EX1_NO_SHORTCUTS_RESULTS: "${{ steps.ex1_no_shortcuts.outputs.result }}"
-          EX2_FOUND_RESULTS: "${{ steps.ex2_found.outputs.result }}"
-          EX2_NOT_FOUND_RESULTS: "${{ steps.ex2_not_found.outputs.result }}"
-          EX2_EFFICIENCY_RESULTS: "${{ steps.ex2_efficiency.outputs.result }}"
-          EX3_NEW_PRODUCT_RESULTS: "${{ steps.ex3_new_product.outputs.result }}"
-          EX3_SELL_RESULTS: "${{ steps.ex3_sell.outputs.result }}"
-          EX3_RESTOCK_AND_VALUE_RESULTS: "${{ steps.ex3_restock_and_value.outputs.result }}"
-          EX4_ADD_AND_COUNT_RESULTS: "${{ steps.ex4_add_and_count.outputs.result }}"
-          EX4_FIND_PRODUCT_RESULTS: "${{ steps.ex4_find_product.outputs.result }}"
-          EX4_TOTAL_VALUE_RESULTS: "${{ steps.ex4_total_value.outputs.result }}"
+          EX1_INITIAL_STACK_RESULTS: "${{ steps.ex1_initial_stack.outputs.result }}"
+          EX1_PUSH_RESULTS: "${{ steps.ex1_push.outputs.result }}"
+          EX1_PUSH_WHEN_FULL_RESULTS: "${{ steps.ex1_push_when_full.outputs.result }}"
+          EX1_POP_RESULTS: "${{ steps.ex1_pop.outputs.result }}"
+          EX1_POP_WHEN_EMPTY_RESULTS: "${{ steps.ex1_pop_when_empty.outputs.result }}"
+          EX1_USES_TOP_OF_STACK_RESULTS: "${{ steps.ex1_uses_top_of_stack.outputs.result }}"
+          EX1_GET_TEXT_RESULTS: "${{ steps.ex1_get_text.outputs.result }}"
+          EX1_GET_TEXT_KEEPS_STACK_RESULTS: "${{ steps.ex1_get_text_keeps_stack.outputs.result }}"
+          EX2_BINARY_RESULTS: "${{ steps.ex2_binary.outputs.result }}"
+          EX2_STACK_EMPTY_AFTER_RESULTS: "${{ steps.ex2_stack_empty_after.outputs.result }}"
+          EX2_STARTS_WITH_EMPTY_STACK_RESULTS: "${{ steps.ex2_starts_with_empty_stack.outputs.result }}"
+          EX2_USES_THE_STACK_RESULTS: "${{ steps.ex2_uses_the_stack.outputs.result }}"
         with:
-          runners: ex1_find_last,ex1_not_found,ex1_no_shortcuts,ex2_found,ex2_not_found,ex2_efficiency,ex3_new_product,ex3_sell,ex3_restock_and_value,ex4_add_and_count,ex4_find_product,ex4_total_value
+          runners: ex1_initial_stack,ex1_push,ex1_push_when_full,ex1_pop,ex1_pop_when_empty,ex1_uses_top_of_stack,ex1_get_text,ex1_get_text_keeps_stack,ex2_binary,ex2_stack_empty_after,ex2_starts_with_empty_stack,ex2_uses_the_stack
