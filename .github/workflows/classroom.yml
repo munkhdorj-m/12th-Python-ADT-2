@@ -1,0 +1,155 @@
+name: Autograding Tests
+
+on:
+  push:
+    paths:
+      - 'assignment.py'
+      - 'test_assignment.py'
+  workflow_dispatch:
+
+permissions:
+  checks: write
+  actions: read
+  contents: read
+
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install pytest
+        run: pip install -r requirements.txt
+
+      - name: Ex 1 - Find last
+        id: ex1_find_last
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 1 - Find last
+          command: pytest test_assignment.py::test1_find_last
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 1 - Not found
+        id: ex1_not_found
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 1 - Not found
+          command: pytest test_assignment.py::test1_not_found
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 1 - No shortcuts
+        id: ex1_no_shortcuts
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 1 - No shortcuts
+          command: pytest test_assignment.py::test1_no_shortcuts
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 2 - Found
+        id: ex2_found
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 2 - Found
+          command: pytest test_assignment.py::test2_found
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 2 - Not found
+        id: ex2_not_found
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 2 - Not found
+          command: pytest test_assignment.py::test2_not_found
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 2 - Uses binary search
+        id: ex2_efficiency
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 2 - Uses binary search
+          command: pytest test_assignment.py::test2_efficiency
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 3 - New product
+        id: ex3_new_product
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 3 - New product
+          command: pytest test_assignment.py::test3_new_product
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 3 - Sell
+        id: ex3_sell
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 3 - Sell
+          command: pytest test_assignment.py::test3_sell
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 3 - Restock and value
+        id: ex3_restock_and_value
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 3 - Restock and value
+          command: pytest test_assignment.py::test3_restock_and_value
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 4 - Add and count
+        id: ex4_add_and_count
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 4 - Add and count
+          command: pytest test_assignment.py::test4_add_and_count
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 4 - Find product
+        id: ex4_find_product
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 4 - Find product
+          command: pytest test_assignment.py::test4_find_product
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 4 - Total value
+        id: ex4_total_value
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 4 - Total value
+          command: pytest test_assignment.py::test4_total_value
+          timeout: 2
+          max-score: 1
+
+      - name: Autograding Reporter
+        uses: classroom-resources/autograding-grading-reporter@v1
+        env:
+          EX1_FIND_LAST_RESULTS: "${{ steps.ex1_find_last.outputs.result }}"
+          EX1_NOT_FOUND_RESULTS: "${{ steps.ex1_not_found.outputs.result }}"
+          EX1_NO_SHORTCUTS_RESULTS: "${{ steps.ex1_no_shortcuts.outputs.result }}"
+          EX2_FOUND_RESULTS: "${{ steps.ex2_found.outputs.result }}"
+          EX2_NOT_FOUND_RESULTS: "${{ steps.ex2_not_found.outputs.result }}"
+          EX2_EFFICIENCY_RESULTS: "${{ steps.ex2_efficiency.outputs.result }}"
+          EX3_NEW_PRODUCT_RESULTS: "${{ steps.ex3_new_product.outputs.result }}"
+          EX3_SELL_RESULTS: "${{ steps.ex3_sell.outputs.result }}"
+          EX3_RESTOCK_AND_VALUE_RESULTS: "${{ steps.ex3_restock_and_value.outputs.result }}"
+          EX4_ADD_AND_COUNT_RESULTS: "${{ steps.ex4_add_and_count.outputs.result }}"
+          EX4_FIND_PRODUCT_RESULTS: "${{ steps.ex4_find_product.outputs.result }}"
+          EX4_TOTAL_VALUE_RESULTS: "${{ steps.ex4_total_value.outputs.result }}"
+        with:
+          runners: ex1_find_last,ex1_not_found,ex1_no_shortcuts,ex2_found,ex2_not_found,ex2_efficiency,ex3_new_product,ex3_sell,ex3_restock_and_value,ex4_add_and_count,ex4_find_product,ex4_total_value
