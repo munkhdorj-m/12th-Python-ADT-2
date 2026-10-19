@@ -1,171 +1,106 @@
-# Exam
+# Python Stack 2
 
-**Rules**
+Read the Abstract Data Types lecture (Stack section) before you start.
 
-- Write every search yourself. Do **not** use `.index()`, `.count()` or
-  `.reverse()`. (`for ... in` loops are fine.)
-- Exercise 2 must use **binary search** — a linear scan will lose marks even
-  if the answer is correct.
-- Every attribute must be created inside `__init__` using `self.something = ...`
-- When a function or method says it **returns** something, use `return` — do not `print`.
+**Rules for this assignment**
 
----
+- Functions **return** their answer — do not print.
+- Use `global Stack, TopOfStack` in every function that changes them.
 
-## Exercise 1 (3 marks)
+## Exercise 1
 
 **Problem:**
 
-`find_last(data, target)`
+An "undo" stack for a text editor. Every word you type is pushed onto the
+stack. Undo pops the last word off.
 
-Use **linear search** to return the index of the **last** place where
-`target` appears in `data`. Return `-1` if it is not there.
+Set up the stack:
 
-Do not change the list.
+- `Stack` → a global array of **8** elements, all set to `""` (empty string)
+- `TopOfStack` → a global integer, set to `-1`
 
-**Example:**
+Then write three functions:
 
-    Example Input:
-        data   = [4, 2, 4, 9, 4]
-        target = 4
+`Push(Word)`
 
-    Program Output:
-        4
+- If the stack is full (`TopOfStack` is 7), return `False`
+- Otherwise add 1 to `TopOfStack`, store `Word` at `Stack[TopOfStack]`,
+  and return `True`
 
-    Example Input:
-        data   = [4, 2, 4, 9]
-        target = 4
+`Pop()`
 
-    Program Output:
-        2
+- If the stack is empty, return `""` (empty string)
+- Otherwise return the word at `Stack[TopOfStack]`, and take 1 off `TopOfStack`
 
-    Example Input:
-        data   = [10, 20, 30]
-        target = 99
+`GetText()`
 
-    Program Output:
-        -1
-
-*Hint:* do not stop at the first match — keep going to the end and remember
-the last match you saw.
-
----
-
-## Exercise 2 (3 marks)
-
-**Problem:**
-
-`binary_search(data, target)`
-
-`data` is a **sorted** list. Use **binary search** to return the index of
-`target`, or `-1` if it is not in the list.
-
-**Example:**
-
-    Example Input:
-        data   = [1, 3, 5, 7, 9, 11]
-        target = 7
-
-    Program Output:
-        3
-
-    Example Input:
-        data   = [1, 3, 5, 7, 9, 11]
-        target = 4
-
-    Program Output:
-        -1
-
-    Example Input:
-        data   = []
-        target = 1
-
-    Program Output:
-        -1
-
-Your function will also be tested on a list of 100,000 numbers.
-
----
-
-## Exercise 3 (3 marks)
-
-**Problem:**
-
-- Create a `Product` class for an item in a shop.
-    - Attributes:
-        - `name`
-        - `price` → the price of **one** item
-        - `stock` → how many are in the shop
-    - Methods:
-        - `sell(amount)` → takes `amount` off `stock` and **returns** `True`.
-          If `amount` is `0` or less, or more than the stock, nothing changes
-          and it **returns** `False`. Selling exactly all the stock is allowed.
-        - `restock(amount)` → adds `amount` to `stock` and **returns** `True`.
-          If `amount` is `0` or less, nothing changes and it **returns** `False`.
-        - `value()` → **returns** `price` × `stock`
+- Return all the words in the stack, from the **bottom** (`Stack[0]`) up to
+  the **top** (`Stack[TopOfStack]`), with **one space** between each word
+- Return `""` if the stack is empty
+- Do **not** change the stack
 
 **Example:**
 
     Input:
-      p = Product("Pen", 500, 20)
-      print(p.sell(3))
-      print(p.sell(50))
-      print(p.stock)
-      print(p.restock(-5))
-      print(p.value())
+      Push("I")
+      Push("love")
+      Push("Python")
+      print(GetText())
+      print(Pop())
+      print(GetText())
+      Push("cats")
+      print(GetText())
 
     Output:
-      True
-      False
-      17
-      False
-      8500
+      I love Python
+      Python
+      I love
+      I love cats
+
+*Hint:* after `Pop()`, the word `"Python"` is still in the array — only
+`TopOfStack` moved. So `GetText()` must stop at `TopOfStack`, not at the end
+of the array.
 
 ---
 
-## Exercise 4 (3 marks)
+## Exercise 2
 
 **Problem:**
 
-A `Shop` stores `Product` **objects** from Exercise 3.
+`DecimalToBinary(Number)`
 
-- Create a `Shop` class.
-    - Attributes:
-        - `name`
-        - `products` → starts as an **empty list**
-    - Methods:
-        - `add_product(product)` → adds a `Product` object to `products`
-        - `count()` → **returns** how many products the shop has
-        - `find_product(name)` → use **linear search** to find the product with
-          that name and **return the Product object**. If there is none,
-          **return** `None`.
-        - `total_value()` → **returns** the total `value()` of all products.
-          An empty shop returns `0`.
+`Number` is a whole number from `0` to `255`. Use **your stack** to change it
+into a binary string.
 
-**Important:** create the empty list inside `__init__`. Every shop must have
-its own list.
+1. **Empty the stack first** by setting `TopOfStack` to `-1`.
+2. If `Number` is `0`, return `"0"`.
+3. While `Number` is more than 0:
+    - Push the remainder `Number % 2` onto the stack **as a string**
+    - Divide `Number` by 2 with `//`
+4. Pop every digit off the stack, joining them into one string, and return it.
+
+Do **not** use `bin()` or `format()`.
 
 **Example:**
 
-    Input:
-      shop = Shop("School Shop")
-      shop.add_product(Product("Pen", 500, 20))
-      shop.add_product(Product("Ruler", 800, 5))
+    Input:                      Output:
+      DecimalToBinary(5)          "101"
+      DecimalToBinary(10)         "1010"
+      DecimalToBinary(255)        "11111111"
+      DecimalToBinary(0)          "0"
 
-      print(shop.count())
-      print(shop.find_product("Ruler").price)
-      print(shop.find_product("Eraser"))
-      print(shop.total_value())
+How it works for `13`:
 
-    Output:
-      2
-      800
-      None
-      14000
+    13 % 2 = 1   push "1"     13 // 2 = 6
+     6 % 2 = 0   push "0"      6 // 2 = 3
+     3 % 2 = 1   push "1"      3 // 2 = 1
+     1 % 2 = 1   push "1"      1 // 2 = 0   stop
 
-`total_value()` is 500 × 20 + 800 × 5 = 14000.
+    Stack (bottom → top):  "1"  "0"  "1"  "1"
+    Pop them all:          "1"  "1"  "0"  "1"   →   "1101"
 
----
+The remainders come out in the **wrong** order, and the stack turns them
+around — Last In, First Out.
 
-## How to test your work
+Why is the stack size 8? The biggest number, 255, is `11111111` — exactly 8 digits.
 
-    pytest -v
