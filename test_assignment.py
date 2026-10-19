@@ -1,170 +1,146 @@
 import ast
+import importlib
 import inspect
 import textwrap
 
 import pytest
 
-from assignment import find_last, binary_search, Product, Shop
+import assignment
 
 
-class CountingList(list):
-    def __init__(self, *args):
-        super().__init__(*args)
-        self.accesses = 0
-
-    def __getitem__(self, index):
-        self.accesses += 1
-        return super().__getitem__(index)
-
-    def __iter__(self):
-        self.accesses += len(self)
-        return super().__iter__()
-
-    def __contains__(self, value):
-        self.accesses += len(self)
-        return super().__contains__(value)
-
-    def index(self, *args):
-        self.accesses += len(self)
-        return super().index(*args)
-
-    def count(self, value):
-        self.accesses += len(self)
-        return super().count(value)
+@pytest.fixture
+def s():
+    return importlib.reload(assignment)
 
 
-def check_not_used(function, banned):
+def calls_in(function):
     tree = ast.parse(textwrap.dedent(inspect.getsource(function)))
+    names = []
     for node in ast.walk(tree):
-        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
-            if node.func.attr in banned:
-                pytest.fail(function.__name__ + " uses ." + node.func.attr + "(). Write the search yourself.")
+        if isinstance(node, ast.Call):
+            if isinstance(node.func, ast.Name):
+                names.append(node.func.id)
+            if isinstance(node.func, ast.Attribute):
+                names.append("." + node.func.attr)
+    return names
 
 
-@pytest.mark.parametrize("data, target, expected", [
-    [[4, 2, 4, 9, 4], 4, 4],
-    [[4, 2, 4, 9], 4, 2],
-    [[10, 20, 30], 10, 0],
-    [[10, 20, 30], 30, 2],
-    [["a", "b", "a", "c"], "a", 2],
+def check_no_list_methods(function):
+    for name in calls_in(function):
+        if name in [".append", ".pop", ".insert", ".remove", ".extend", ".clear"]:
+            pytest.fail(
+                function.__name__ + "() uses " + name + "(). "
+                "Change TopOfStack and use Stack[TopOfStack] instead."
+            )
+
+
+def test1_initial_stack(s):
+    assert s.Stack == ["", "", "", "", "", "", "", ""]
+    assert s.TopOfStack == -1
+
+
+def test1_push(s):
+    assert s.Push("I") == True
+    assert s.TopOfStack == 0
+    assert s.Stack[0] == "I"
+    assert s.Push("love") == True
+    assert s.TopOfStack == 1
+    assert s.Stack[1] == "love"
+
+
+def test1_push_when_full(s):
+    for word in ["a", "b", "c", "d", "e", "f", "g", "h"]:
+        assert s.Push(word) == True
+    assert s.TopOfStack == 7
+    assert s.Push("i") == False
+    assert s.TopOfStack == 7
+    assert s.Stack == ["a", "b", "c", "d", "e", "f", "g", "h"]
+
+
+def test1_pop(s):
+    s.Push("I")
+    s.Push("love")
+    s.Push("Python")
+    assert s.Pop() == "Python"
+    assert s.TopOfStack == 1
+    assert s.Pop() == "love"
+    assert s.Pop() == "I"
+    assert s.TopOfStack == -1
+
+
+def test1_pop_when_empty(s):
+    assert s.Pop() == ""
+    assert s.TopOfStack == -1
+    s.Push("hi")
+    s.Pop()
+    assert s.Pop() == ""
+    assert s.TopOfStack == -1
+
+
+def test1_uses_top_of_stack(s):
+    check_no_list_methods(s.Push)
+    check_no_list_methods(s.Pop)
+    for x in range(10):
+        s.Push("w" + str(x))
+    for x in range(10):
+        s.Pop()
+    assert len(s.Stack) == 8
+
+
+def test1_get_text(s):
+    assert s.GetText() == ""
+    s.Push("I")
+    assert s.GetText() == "I"
+    s.Push("love")
+    s.Push("Python")
+    assert s.GetText() == "I love Python"
+    s.Pop()
+    assert s.GetText() == "I love"
+    s.Push("cats")
+    assert s.GetText() == "I love cats"
+
+
+def test1_get_text_keeps_stack(s):
+    s.Push("I")
+    s.Push("love")
+    s.Push("Python")
+    s.GetText()
+    s.GetText()
+    assert s.TopOfStack == 2
+    assert s.Pop() == "Python"
+
+
+@pytest.mark.parametrize("number, expected", [
+    [5, "101"],
+    [10, "1010"],
+    [1, "1"],
+    [2, "10"],
+    [0, "0"],
+    [128, "10000000"],
+    [255, "11111111"],
+    [100, "1100100"],
 ])
-def test1_find_last(data, target, expected):
-    assert find_last(data, target) == expected
+def test2_binary(s, number, expected):
+    assert s.DecimalToBinary(number) == expected
 
 
-@pytest.mark.parametrize("data, target", [
-    [[10, 20, 30], 99],
-    [[], 5],
-    [[7], 8],
-])
-def test1_not_found(data, target):
-    assert find_last(data, target) == -1
+def test2_stack_empty_after(s):
+    assert s.DecimalToBinary(13) == "1101"
+    assert s.TopOfStack == -1
 
 
-def test1_no_shortcuts():
-    check_not_used(find_last, ["index", "count", "reverse", "rindex"])
-    data = [3, 1, 3, 2]
-    assert find_last(data, 3) == 2
-    assert data == [3, 1, 3, 2]
+def test2_starts_with_empty_stack(s):
+    s.Push("x")
+    s.Push("y")
+    assert s.DecimalToBinary(5) == "101"
+    s.Push("1")
+    assert s.DecimalToBinary(6) == "110"
 
 
-@pytest.mark.parametrize("data, target, expected", [
-    [[1, 3, 5, 7, 9, 11], 7, 3],
-    [[1, 3, 5, 7, 9, 11], 1, 0],
-    [[1, 3, 5, 7, 9, 11], 11, 5],
-    [[5], 5, 0],
-    [[-8, -3, 0, 4, 10], -3, 1],
-])
-def test2_found(data, target, expected):
-    assert binary_search(data, target) == expected
-
-
-@pytest.mark.parametrize("data, target", [
-    [[1, 3, 5, 7, 9, 11], 4],
-    [[1, 3, 5, 7, 9, 11], 0],
-    [[1, 3, 5, 7, 9, 11], 12],
-    [[5], 2],
-    [[], 1],
-])
-def test2_not_found(data, target):
-    assert binary_search(data, target) == -1
-
-
-def test2_efficiency():
-    check_not_used(binary_search, ["index", "count"])
-    data = CountingList(range(0, 200000, 2))
-    assert binary_search(data, 123456) == 61728
-    checked = data.accesses
-    assert checked < 200, "Too many elements checked (" + str(checked) + "). Use binary search."
-    data = CountingList(range(0, 200000, 2))
-    assert binary_search(data, 123457) == -1
-    checked = data.accesses
-    assert checked < 200, "Too many elements checked (" + str(checked) + "). Use binary search."
-
-
-def test3_new_product():
-    p = Product("Pen", 500, 20)
-    assert p.name == "Pen"
-    assert p.price == 500
-    assert p.stock == 20
-
-
-def test3_sell():
-    p = Product("Pen", 500, 20)
-    assert p.sell(3) == True
-    assert p.stock == 17
-    assert p.sell(50) == False
-    assert p.stock == 17
-    assert p.sell(0) == False
-    assert p.sell(-2) == False
-    assert p.stock == 17
-    assert p.sell(17) == True
-    assert p.stock == 0
-
-
-def test3_restock_and_value():
-    p = Product("Notebook", 1500, 4)
-    assert p.value() == 6000
-    assert p.restock(6) == True
-    assert p.stock == 10
-    assert p.restock(0) == False
-    assert p.restock(-5) == False
-    assert p.stock == 10
-    assert p.value() == 15000
-
-
-def test4_add_and_count():
-    shop = Shop("School Shop")
-    assert shop.name == "School Shop"
-    assert shop.products == []
-    assert shop.count() == 0
-    pen = Product("Pen", 500, 20)
-    shop.add_product(pen)
-    shop.add_product(Product("Ruler", 800, 5))
-    assert shop.count() == 2
-    assert shop.products[0] is pen
-    other = Shop("Other Shop")
-    assert other.products == []
-    assert other.count() == 0
-
-
-def test4_find_product():
-    shop = Shop("School Shop")
-    assert shop.find_product("Pen") is None
-    pen = Product("Pen", 500, 20)
-    ruler = Product("Ruler", 800, 5)
-    shop.add_product(pen)
-    shop.add_product(ruler)
-    assert shop.find_product("Ruler") is ruler
-    assert shop.find_product("Pen") is pen
-    assert shop.find_product("Eraser") is None
-
-
-def test4_total_value():
-    shop = Shop("School Shop")
-    assert shop.total_value() == 0
-    shop.add_product(Product("Pen", 500, 20))
-    shop.add_product(Product("Ruler", 800, 5))
-    assert shop.total_value() == 14000
-    shop.find_product("Pen").sell(10)
-    assert shop.total_value() == 9000
+def test2_uses_the_stack(s):
+    names = calls_in(s.DecimalToBinary)
+    for banned in ["bin", "format", ".format"]:
+        if banned in names:
+            pytest.fail("DecimalToBinary() uses " + banned + "(). Use the stack instead.")
+    assert "Push" in names, "DecimalToBinary() must call Push()."
+    assert "Pop" in names, "DecimalToBinary() must call Pop()."
