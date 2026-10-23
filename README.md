@@ -1,6 +1,7 @@
 # Python Stack 2
 
 Read the Abstract Data Types lecture (Stack section) before you start.
+https://drive.google.com/file/d/1jXGQdSvuUYjGXl-PUuHMUzKWEBGQoARL/view?usp=sharing
 
 **Rules for this assignment**
 
